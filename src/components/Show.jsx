@@ -5,7 +5,7 @@ import { collection, getDocs, getDoc, deleteDoc, doc } from 'firebase/firestore'
 import Swal from 'sweetalert2'
 import { db } from '../firebase-content/firebase'
 
-const mySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal)
 
 const Show = () => {
   const [productos, setProductos] = useState([])
@@ -32,6 +32,27 @@ const Show = () => {
   useEffect( () => {
     getProductos()
   }, [])
+  //Sweet alert
+  const confirmDelete = (id) => { 
+    MySwal.fire({
+      title: '¿Estás seguro que quieres eliminar el Producto?',
+      text: "No podrás revertir esta acción!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteProduct(id)
+        Swal.fire(
+          'Eliminado!',
+          'El registro ha sido eliminado.',
+          'success'
+        )
+      }
+    })
+  }
 
   return (
     <>
@@ -54,8 +75,8 @@ const Show = () => {
                     <td>{producto.description}</td>
                     <td>{producto.stock}</td>
                     <td>
-                      <Link to="/update" className="btn btn-secondary"><i className="fa-solid fa-pen-to-square"></i></Link>
-                      <button onClick={() => deleteProduct(producto.id)} className="btn btn-danger mx-2"><i className="fa-solid fa-trash-can"></i></button>
+                      <Link to={`/edit/${producto.id}</td>`} className="btn btn-secondary"><i className="fa-solid fa-pen-to-square"></i></Link>
+                      <button onClick={() => confirmDelete(producto.id)} className="btn btn-danger mx-2"><i className="fa-solid fa-trash-can"></i></button>
                     </td>
                   </tr>  
               ))}
